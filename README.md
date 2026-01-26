@@ -34,6 +34,11 @@ sqllite-project/
 │   │   │   ├── dto/                 # 数据传输对象
 │   │   │   │   ├── CommandCreateRequest.java
 │   │   │   │   └── CommandUpdateRequest.java
+│   │   │   ├── constants/           # 常量类
+│   │   │   │   ├── UserConstants.java
+│   │   │   │   ├── CommandConstants.java
+│   │   │   │   ├── ResponseConstants.java
+│   │   │   │   └── ControllerConstants.java
 │   │   │   └── SqlliteProjectApplication.java
 │   │   └── resources/
 │   │       └── application.properties
@@ -186,8 +191,10 @@ spring.datasource.hikari.connection-init-sql=PRAGMA journal_mode=WAL;
 ```
 
 测试包括：
-- `UserServiceTest`: 测试服务层业务逻辑
-- `UserControllerTest`: 测试控制器接口
+- `UserServiceTest`: 测试用户服务层业务逻辑
+- `UserControllerTest`: 测试用户控制器接口
+- `CommandServiceTest`: 测试命令服务层CRUD操作
+- `CommandControllerTest`: 测试命令控制器接口
 
 ## 数据库表结构
 
@@ -252,7 +259,46 @@ CREATE TABLE IF NOT EXISTS command (
 2. 使用注解进行参数验证（如@NotNull, @Size等）
 3. 在Controller中使用 `@RequestBody` 接收JSON参数
 
-## 常见问题
+### 添加新的常量类
+
+1. 在 `constants` 包下创建常量类
+2. 按模块分组，使用内部类组织常量
+3. 为每个常量添加详细的JavaDoc注释
+4. 避免在代码中使用魔法字符串，统一使用常量
+
+**常量类示例：**
+- `UserConstants`: 用户相关常量（SQL、日志消息、测试数据）
+- `CommandConstants`: 命令相关常量（SQL、日志消息、搜索通配符）
+- `ResponseConstants`: 响应相关常量（字段名、路径前缀）
+- `ControllerConstants`: 控制器相关常量（API路径、返回消息）
+
+## 代码规范
+
+### 常量使用
+
+项目中所有字符串常量都定义在 `constants` 包下，避免使用魔法字符串：
+
+- **SQL语句**：定义在对应模块的 `SQL` 内部类中
+- **日志消息**：定义在对应模块的 `LogMessage` 内部类中
+- **API路径**：定义在 `ControllerConstants` 中
+- **响应字段**：定义在 `ResponseConstants.Field` 中
+
+### 注释规范
+
+- 所有类必须添加类级JavaDoc注释，说明类的用途
+- 所有公共方法必须添加JavaDoc注释，说明参数和返回值
+- 所有常量必须添加行内注释，说明常量的用途
+- 复杂的业务逻辑需要添加必要的代码注释
+
+### 分层架构
+
+项目遵循严格的分层架构，各层职责明确：
+
+- **Controller层**：只处理HTTP请求和响应，不包含业务逻辑
+- **Service层**：包含所有业务逻辑，使用JdbcTemplate操作数据库
+- **Entity层**：纯粹的POJO类，对应数据库表结构
+- **DTO层**：用于接收和返回数据，与Entity解耦
+- **Constants层**：统一管理所有常量，便于维护
 
 ### Q: 数据库文件在哪里？
 
@@ -265,6 +311,18 @@ A: 修改 `src/main/resources/application.properties` 文件中的数据库相�
 ### Q: SQLite 支持并发访问吗？
 
 A: SQLite 支持多读单写。项目中配置了 WAL（Write-Ahead Logging）模式以提高并发性能。
+
+### Q: 为什么要使用常量类？
+
+A: 使用常量类有以下优点：
+- 避免魔法字符串，提高代码可读性
+- 集中管理常量，便于统一修改
+- 减少拼写错误的风险
+- 便于代码重构和维护
+
+### Q: 项目使用什么ORM框架？
+
+A: 项目使用 Spring 的 `JdbcTemplate` 进行数据库操作，这是轻量级的ORM方案，适合小型项目使用。
 
 ## 许可证
 
