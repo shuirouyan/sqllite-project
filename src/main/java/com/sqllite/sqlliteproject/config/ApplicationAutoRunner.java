@@ -25,10 +25,9 @@ public class ApplicationAutoRunner implements ApplicationRunner {
      * 创建users表，如果表已存在则忽略
      *
      * @param args 应用启动参数
-     * @throws Exception 执行异常
      */
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         String sql = """
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
