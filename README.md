@@ -24,9 +24,16 @@ sqllite-project/
 │   │   │   │   ├── ApplicationAutoRunner.java
 │   │   │   │   └── CommandLineAutoConfig.java
 │   │   │   ├── controller/          # 控制器层
-│   │   │   │   └── UserController.java
+│   │   │   │   ├── UserController.java
+│   │   │   │   └── CommandController.java
 │   │   │   ├── service/             # 服务层
-│   │   │   │   └── UserService.java
+│   │   │   │   ├── UserService.java
+│   │   │   │   └── CommandService.java
+│   │   │   ├── entity/              # 实体类
+│   │   │   │   └── Command.java
+│   │   │   ├── dto/                 # 数据传输对象
+│   │   │   │   ├── CommandCreateRequest.java
+│   │   │   │   └── CommandUpdateRequest.java
 │   │   │   └── SqlliteProjectApplication.java
 │   │   └── resources/
 │   │       └── application.properties
@@ -44,6 +51,8 @@ sqllite-project/
 
 ### REST API 接口
 
+#### 用户相关接口
+
 | 接口路径 | 方法 | 描述 |
 |---------|------|------|
 | `/api/users/test` | GET | 测试数据库连接 |
@@ -51,6 +60,19 @@ sqllite-project/
 | `/api/users/schema` | GET | 获取users表结构 |
 | `/api/users/classpath` | GET | 获取classpath路径 |
 | `/api/users/insert` | GET | 插入测试用户数据 |
+
+#### 命令相关接口
+
+| 接口路径 | 方法 | 描述 | 请求体 |
+|---------|------|------|--------|
+| `/api/commands` | POST | 创建命令 | `{"text": "xxx", "num": 123}` |
+| `/api/commands/{id}` | GET | 根据ID查询命令 | - |
+| `/api/commands` | GET | 查询所有命令 | - |
+| `/api/commands/search?text=xxx` | GET | 根据文本搜索命令 | - |
+| `/api/commands/{id}` | PUT | 更新命令 | `{"text": "xxx", "num": 123}` |
+| `/api/commands/{id}` | DELETE | 根据ID删除命令 | - |
+| `/api/commands/all` | DELETE | 删除所有命令 | - |
+| `/api/commands/count` | GET | 统计命令数量 | - |
 
 ## 快速开始
 
@@ -88,6 +110,8 @@ mvnw.cmd spring-boot:run
 
 在浏览器或使用 Postman 等工具访问以下接口：
 
+#### 用户相关接口
+
 ```bash
 # 测试数据库连接
 curl http://localhost:8000/api/users/test
@@ -100,6 +124,35 @@ curl http://localhost:8000/api/users/schema
 
 # 插入测试数据
 curl http://localhost:8000/api/users/insert
+```
+
+#### 命令相关接口
+
+```bash
+# 创建命令
+curl -X POST http://localhost:8000/api/commands \
+  -H "Content-Type: application/json" \
+  -d '{"text": "test command", "num": 100}'
+
+# 查询所有命令
+curl http://localhost:8000/api/commands
+
+# 根据ID查询命令
+curl http://localhost:8000/api/commands/1
+
+# 搜索命令
+curl http://localhost:8000/api/commands/search?text=test
+
+# 更新命令
+curl -X PUT http://localhost:8000/api/commands/1 \
+  -H "Content-Type: application/json" \
+  -d '{"text": "updated command", "num": 200}'
+
+# 删除命令
+curl -X DELETE http://localhost:8000/api/commands/1
+
+# 统计命令数量
+curl http://localhost:8000/api/commands/count
 ```
 
 ## 配置说明
@@ -156,7 +209,20 @@ CREATE TABLE IF NOT EXISTS command (
 )
 ```
 
+**字段说明：**
+- `id`: 命令ID，主键，自增
+- `text`: 命令文本，必填
+- `num`: 数字值，可选
+
 ## 开发说明
+
+### 项目架构
+
+项目采用经典的三层架构：
+- **Controller层**: 处理HTTP请求和响应
+- **Service层**: 实现业务逻辑
+- **Entity层**: 数据库实体映射
+- **DTO层**: 数据传输对象，用于接收请求参数
 
 ### 添加新的Controller
 
@@ -164,6 +230,7 @@ CREATE TABLE IF NOT EXISTS command (
 2. 使用 `@RestController` 和 `@RequestMapping` 注解
 3. 注入对应的 Service
 4. 定义接口方法并添加相应注解
+5. 使用专门的DTO类接收请求参数
 
 ### 添加新的Service
 
@@ -171,6 +238,19 @@ CREATE TABLE IF NOT EXISTS command (
 2. 使用 `@Service` 注解
 3. 注入 `JdbcTemplate`
 4. 实现业务逻辑方法
+5. 使用 `RowMapper` 进行结果集映射
+
+### 添加新的Entity
+
+1. 在 `entity` 包下创建实体类
+2. 定义字段和getter/setter方法
+3. 在Service中使用 `RowMapper` 进行映射
+
+### 添加新的DTO
+
+1. 在 `dto` 包下创建请求/响应DTO
+2. 使用注解进行参数验证（如@NotNull, @Size等）
+3. 在Controller中使用 `@RequestBody` 接收JSON参数
 
 ## 常见问题
 
