@@ -1,5 +1,6 @@
 package com.sqllite.sqlliteproject.service;
 
+import com.sqllite.sqlliteproject.constants.UserConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,8 @@ public class UserService {
      * @return 数据库连接测试结果（1表示成功）
      */
     public Integer testConnection() {
-        String sql = "SELECT 1";
-        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
-        logger.info("Database connection test result: " + result);
+        Integer result = jdbcTemplate.queryForObject(UserConstants.SQL.SELECT_ONE, Integer.class);
+        logger.info(UserConstants.LogMessage.DB_CONNECTION_TEST_RESULT, result);
         return result;
     }
 
@@ -35,13 +35,12 @@ public class UserService {
      * @return users表的DDL语句，如果表不存在返回错误信息
      */
     public String getUserTableSchema() {
-        String sql = "SELECT sql FROM sqlite_master WHERE type='table' AND name='users'";
         try {
-            String schema = jdbcTemplate.queryForObject(sql, String.class);
-            return schema != null ? schema : "User table not found";
+            String schema = jdbcTemplate.queryForObject(UserConstants.SQL.SELECT_USER_SCHEMA, String.class);
+            return schema != null ? schema : UserConstants.LogMessage.USER_TABLE_SCHEMA_NOT_FOUND;
         } catch (Exception e) {
-            logger.error("Error querying user table schema", e);
-            return "Error querying user table schema: " + e.getMessage();
+            logger.error(UserConstants.LogMessage.USER_TABLE_SCHEMA_ERROR, e);
+            return UserConstants.LogMessage.USER_TABLE_SCHEMA_ERROR_PREFIX + e.getMessage();
         }
     }
 
@@ -52,14 +51,12 @@ public class UserService {
      * @return 受影响的行数（1表示成功）
      */
     public int insertUser() {
-        String sql = "INSERT INTO users (username, age) VALUES (?, ?)";
-        String name = "Test User";
-        Integer age = 26;
-        int affectedRows = jdbcTemplate.update(sql, name, age);
-        logger.info("Inserted user, affected rows: {}", affectedRows);
+        int affectedRows = jdbcTemplate.update(
+                UserConstants.SQL.INSERT_USER,
+                UserConstants.UserData.TEST_USERNAME,
+                UserConstants.UserData.TEST_AGE
+        );
+        logger.info(UserConstants.LogMessage.USER_INSERTED, affectedRows);
         return affectedRows;
     }
-
-
-
 }

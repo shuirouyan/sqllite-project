@@ -1,5 +1,7 @@
 package com.sqllite.sqlliteproject.controller;
 
+import com.sqllite.sqlliteproject.constants.ControllerConstants;
+import com.sqllite.sqlliteproject.constants.ResponseConstants;
 import com.sqllite.sqlliteproject.dto.CommandCreateRequest;
 import com.sqllite.sqlliteproject.dto.CommandUpdateRequest;
 import com.sqllite.sqlliteproject.entity.Command;
@@ -15,7 +17,7 @@ import java.util.Map;
  * 提供command表相关的REST API接口
  */
 @RestController
-@RequestMapping("/api/commands")
+@RequestMapping(ControllerConstants.CommandPath.BASE)
 public class CommandController {
 
     @Autowired
@@ -30,7 +32,10 @@ public class CommandController {
     @PostMapping
     public Map<String, Object> createCommand(@RequestBody CommandCreateRequest request) {
         int affectedRows = commandService.createCommand(request.getText(), request.getNum());
-        return Map.of("success", affectedRows > 0, "affectedRows", affectedRows);
+        return Map.of(
+                ResponseConstants.Field.SUCCESS, affectedRows > 0,
+                ResponseConstants.Field.AFFECTED_ROWS, affectedRows
+        );
     }
 
     /**
@@ -39,7 +44,7 @@ public class CommandController {
      * @param id 命令ID
      * @return 命令对象
      */
-    @GetMapping("/{id}")
+    @GetMapping(ControllerConstants.CommandPath.ID_PATH)
     public Command getCommandById(@PathVariable Integer id) {
         return commandService.getCommandById(id);
     }
@@ -60,7 +65,7 @@ public class CommandController {
      * @param text 搜索文本
      * @return 命令列表
      */
-    @GetMapping("/search")
+    @GetMapping(ControllerConstants.CommandPath.SEARCH)
     public List<Command> searchCommandsByText(@RequestParam String text) {
         return commandService.getCommandsByText(text);
     }
@@ -72,10 +77,13 @@ public class CommandController {
      * @param request 命令更新请求
      * @return 操作结果
      */
-    @PutMapping("/{id}")
+    @PutMapping(ControllerConstants.CommandPath.ID_PATH)
     public Map<String, Object> updateCommand(@PathVariable Integer id, @RequestBody CommandUpdateRequest request) {
         int affectedRows = commandService.updateCommand(id, request.getText(), request.getNum());
-        return Map.of("success", affectedRows > 0, "affectedRows", affectedRows);
+        return Map.of(
+                ResponseConstants.Field.SUCCESS, affectedRows > 0,
+                ResponseConstants.Field.AFFECTED_ROWS, affectedRows
+        );
     }
 
     /**
@@ -84,10 +92,13 @@ public class CommandController {
      * @param id 命令ID
      * @return 操作结果
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ControllerConstants.CommandPath.ID_PATH)
     public Map<String, Object> deleteCommand(@PathVariable Integer id) {
         int affectedRows = commandService.deleteCommand(id);
-        return Map.of("success", affectedRows > 0, "affectedRows", affectedRows);
+        return Map.of(
+                ResponseConstants.Field.SUCCESS, affectedRows > 0,
+                ResponseConstants.Field.AFFECTED_ROWS, affectedRows
+        );
     }
 
     /**
@@ -95,10 +106,13 @@ public class CommandController {
      *
      * @return 操作结果
      */
-    @DeleteMapping("/all")
+    @DeleteMapping(ControllerConstants.CommandPath.ALL)
     public Map<String, Object> deleteAllCommands() {
         int affectedRows = commandService.deleteAllCommands();
-        return Map.of("success", true, "affectedRows", affectedRows);
+        return Map.of(
+                ResponseConstants.Field.SUCCESS, true,
+                ResponseConstants.Field.AFFECTED_ROWS, affectedRows
+        );
     }
 
     /**
@@ -106,9 +120,9 @@ public class CommandController {
      *
      * @return 命令总数
      */
-    @GetMapping("/count")
+    @GetMapping(ControllerConstants.CommandPath.COUNT)
     public Map<String, Integer> countCommands() {
         int count = commandService.countCommands();
-        return Map.of("count", count);
+        return Map.of(ResponseConstants.Field.COUNT, count);
     }
 }

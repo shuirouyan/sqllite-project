@@ -1,5 +1,7 @@
 package com.sqllite.sqlliteproject.controller;
 
+import com.sqllite.sqlliteproject.constants.ControllerConstants;
+import com.sqllite.sqlliteproject.constants.ResponseConstants;
 import com.sqllite.sqlliteproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
@@ -15,7 +17,7 @@ import java.io.FileNotFoundException;
  * 提供用户相关的REST API接口
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(ControllerConstants.UserPath.BASE)
 public class UserController {
 
     @Autowired
@@ -26,11 +28,11 @@ public class UserController {
      *
      * @return 连接测试结果
      */
-    @GetMapping("/test")
+    @GetMapping(ControllerConstants.UserPath.TEST)
     public EntityResponse<String> testConnection() {
         Integer resp = userService.testConnection();
         return EntityResponse
-                .fromObject("Database connection test executed. Check console for results.num:".formatted("%d", resp))
+                .fromObject(ControllerConstants.Message.DB_CONNECTION_TEST.formatted(resp))
                 .build();
     }
 
@@ -39,10 +41,9 @@ public class UserController {
      *
      * @return 数据库连接测试结果
      */
-    @GetMapping("/sqllite")
+    @GetMapping(ControllerConstants.UserPath.SQLLITE)
     public Integer testConnection2() {
-        Integer resp = userService.testConnection();
-        return resp;
+        return userService.testConnection();
     }
 
     /**
@@ -50,7 +51,7 @@ public class UserController {
      *
      * @return users表的DDL语句
      */
-    @GetMapping("/schema")
+    @GetMapping(ControllerConstants.UserPath.SCHEMA)
     public String getUserTableSchema() {
         return userService.getUserTableSchema();
     }
@@ -60,10 +61,10 @@ public class UserController {
      *
      * @return classpath路径字符串
      */
-    @GetMapping("classpath")
+    @GetMapping(ControllerConstants.UserPath.CLASSPATH)
     public String getClassPath() {
         try {
-            return ResourceUtils.getURL("classpath:").getPath();
+            return ResourceUtils.getURL(ResponseConstants.CLASSPATH_PREFIX).getPath();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -74,7 +75,7 @@ public class UserController {
      *
      * @return 受影响的行数
      */
-    @GetMapping("/insert")
+    @GetMapping(ControllerConstants.UserPath.INSERT)
     public int insertUser() {
         return userService.insertUser();
     }

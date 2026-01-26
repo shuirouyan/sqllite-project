@@ -1,5 +1,6 @@
 package com.sqllite.sqlliteproject.service;
 
+import com.sqllite.sqlliteproject.constants.CommandConstants;
 import com.sqllite.sqlliteproject.entity.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,8 @@ public class CommandService {
      * @return 受影响的行数（1表示成功）
      */
     public int createCommand(String text, Integer num) {
-        String sql = "INSERT INTO command (text, num) VALUES (?, ?)";
-        int affectedRows = jdbcTemplate.update(sql, text, num);
-        logger.info("Created command, text: {}, num: {}, affected rows: {}", text, num, affectedRows);
+        int affectedRows = jdbcTemplate.update(CommandConstants.SQL.INSERT_COMMAND, text, num);
+        logger.info(CommandConstants.LogMessage.COMMAND_CREATED, text, num, affectedRows);
         return affectedRows;
     }
 
@@ -44,11 +44,10 @@ public class CommandService {
      * @return 命令对象，如果不存在返回null
      */
     public Command getCommandById(Integer id) {
-        String sql = "SELECT id, text, num FROM command WHERE id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new CommandRowMapper(), id);
+            return jdbcTemplate.queryForObject(CommandConstants.SQL.SELECT_BY_ID, new CommandRowMapper(), id);
         } catch (Exception e) {
-            logger.error("Error querying command by id: {}", id, e);
+            logger.error(CommandConstants.LogMessage.COMMAND_QUERY_ERROR, id, e);
             return null;
         }
     }
@@ -59,9 +58,8 @@ public class CommandService {
      * @return 命令列表
      */
     public List<Command> getAllCommands() {
-        String sql = "SELECT id, text, num FROM command ORDER BY id DESC";
-        List<Command> commands = jdbcTemplate.query(sql, new CommandRowMapper());
-        logger.info("Retrieved {} commands", commands.size());
+        List<Command> commands = jdbcTemplate.query(CommandConstants.SQL.SELECT_ALL, new CommandRowMapper());
+        logger.info(CommandConstants.LogMessage.COMMANDS_RETRIEVED, commands.size());
         return commands;
     }
 
@@ -72,10 +70,13 @@ public class CommandService {
      * @return 命令列表
      */
     public List<Command> getCommandsByText(String text) {
-        String sql = "SELECT id, text, num FROM command WHERE text LIKE ? ORDER BY id DESC";
-        String searchTerm = "%" + text + "%";
-        List<Command> commands = jdbcTemplate.query(sql, new CommandRowMapper(), searchTerm);
-        logger.info("Retrieved {} commands with text containing: {}", commands.size(), text);
+        String searchTerm = CommandConstants.SEARCH_WILDCARD + text + CommandConstants.SEARCH_WILDCARD;
+        List<Command> commands = jdbcTemplate.query(
+                CommandConstants.SQL.SEARCH_BY_TEXT,
+                new CommandRowMapper(),
+                searchTerm
+        );
+        logger.info(CommandConstants.LogMessage.COMMANDS_SEARCH_RESULT, commands.size(), text);
         return commands;
     }
 
@@ -88,9 +89,8 @@ public class CommandService {
      * @return 受影响的行数（1表示成功，0表示记录不存在）
      */
     public int updateCommand(Integer id, String text, Integer num) {
-        String sql = "UPDATE command SET text = ?, num = ? WHERE id = ?";
-        int affectedRows = jdbcTemplate.update(sql, text, num, id);
-        logger.info("Updated command, id: {}, text: {}, num: {}, affected rows: {}", id, text, num, affectedRows);
+        int affectedRows = jdbcTemplate.update(CommandConstants.SQL.UPDATE_COMMAND, text, num, id);
+        logger.info(CommandConstants.LogMessage.COMMAND_UPDATED, id, text, num, affectedRows);
         return affectedRows;
     }
 
@@ -101,9 +101,8 @@ public class CommandService {
      * @return 受影响的行数（1表示成功，0表示记录不存在）
      */
     public int deleteCommand(Integer id) {
-        String sql = "DELETE FROM command WHERE id = ?";
-        int affectedRows = jdbcTemplate.update(sql, id);
-        logger.info("Deleted command, id: {}, affected rows: {}", id, affectedRows);
+        int affectedRows = jdbcTemplate.update(CommandConstants.SQL.DELETE_BY_ID, id);
+        logger.info(CommandConstants.LogMessage.COMMAND_DELETED, id, affectedRows);
         return affectedRows;
     }
 
@@ -113,9 +112,8 @@ public class CommandService {
      * @return 受影响的行数
      */
     public int deleteAllCommands() {
-        String sql = "DELETE FROM command";
-        int affectedRows = jdbcTemplate.update(sql);
-        logger.info("Deleted all commands, affected rows: {}", affectedRows);
+        int affectedRows = jdbcTemplate.update(CommandConstants.SQL.DELETE_ALL);
+        logger.info(CommandConstants.LogMessage.ALL_COMMANDS_DELETED, affectedRows);
         return affectedRows;
     }
 
@@ -125,8 +123,7 @@ public class CommandService {
      * @return 命令总数
      */
     public int countCommands() {
-        String sql = "SELECT COUNT(*) FROM command";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        Integer count = jdbcTemplate.queryForObject(CommandConstants.SQL.COUNT_ALL, Integer.class);
         return count != null ? count : 0;
     }
 
