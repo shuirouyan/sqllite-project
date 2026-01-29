@@ -1,0 +1,272 @@
+= SQLite Project API 文档
+
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== 简介
+
+本文档描述了 SQLite Project 的 REST API 接口。本项目提供了命令管理和用户相关的API接口。
+
+== 认证
+
+当前版本的所有接口均不需要身份认证。
+
+== 数据格式
+
+API 使用 JSON 格式进行数据交换。所有请求和响应的 Content-Type 应设置为 `application/json`。
+
+== Command Controller API
+
+Command Controller 提供命令管理相关的 REST API 接口。
+
+=== 创建命令
+
+创建一个新的命令记录。
+
+* 端点: `POST /api/commands`
+* Content-Type: `application/json`
+
+==== 请求体
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| 字段 | 类型 | 描述
+| text | String | 命令文本
+| num | Integer | 数字值
+|===
+
+==== 请求示例
+
+include::{snippets}/command/create/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/create/http-response.adoc[]
+
+=== 根据ID查询命令
+
+根据指定的ID查询命令详情。
+
+* 端点: `GET /api/commands/{id}`
+
+==== 路径参数
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| 参数 | 类型 | 描述
+| id | Integer | 命令ID
+|===
+
+==== 请求示例
+
+include::{snippets}/command/get-by-id/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/get-by-id/http-response.adoc[]
+
+=== 查询所有命令
+
+获取系统中所有命令的列表。
+
+* 端点: `GET /api/commands`
+
+==== 请求示例
+
+include::{snippets}/command/get-all/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/get-all/http-response.adoc[]
+
+=== 根据文本搜索命令
+
+根据命令文本进行模糊搜索。
+
+* 端点: `GET /api/commands/search`
+
+==== 查询参数
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| 参数 | 类型 | 描述
+| text | String | 搜索文本
+|===
+
+==== 请求示例
+
+include::{snippets}/command/search/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/search/http-response.adoc[]
+
+=== 更新命令
+
+更新指定ID的命令信息。
+
+* 端点: `PUT /api/commands/{id}`
+* Content-Type: `application/json`
+
+==== 路径参数
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| 参数 | 类型 | 描述
+| id | Integer | 命令ID
+|===
+
+==== 请求体
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| 字段 | 类型 | 描述
+| text | String | 命令文本
+| num | Integer | 数字值
+|===
+
+==== 请求示例
+
+include::{snippets}/command/update/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/update/http-response.adoc[]
+
+=== 删除命令
+
+根据ID删除指定的命令记录。
+
+* 端点: `DELETE /api/commands/{id}`
+
+==== 路径参数
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| 参数 | 类型 | 描述
+| id | Integer | 命令ID
+|===
+
+==== 请求示例
+
+include::{snippets}/command/delete/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/delete/http-response.adoc[]
+
+=== 删除所有命令
+
+删除系统中所有的命令记录。
+
+* 端点: `DELETE /api/commands/all`
+
+==== 请求示例
+
+include::{snippets}/command/delete-all/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/delete-all/http-response.adoc[]
+
+=== 统计命令数量
+
+获取系统中命令的总数。
+
+* 端点: `GET /api/commands/count`
+
+==== 请求示例
+
+include::{snippets}/command/count/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/command/count/http-response.adoc[]
+
+== User Controller API
+
+User Controller 提供用户相关的 REST API 接口。
+
+=== 测试数据库连接
+
+测试数据库连接状态。
+
+* 端点: `GET /api/users/test`
+
+==== 请求示例
+
+include::{snippets}/user/test-connection/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/user/test-connection/http-response.adoc[]
+
+=== SQLite连接测试
+
+测试SQLite数据库连接。
+
+* 端点: `GET /api/users/sqllite`
+
+==== 请求示例
+
+include::{snippets}/user/test-connection2/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/user/test-connection2/http-response.adoc[]
+
+=== 获取用户表结构
+
+获取users表的DDL结构。
+
+* 端点: `GET /api/users/schema`
+
+==== 请求示例
+
+include::{snippets}/user/get-schema/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/user/get-schema/http-response.adoc[]
+
+=== 获取Classpath路径
+
+获取项目的classpath路径。
+
+* 端点: `GET /api/users/classpath`
+
+==== 请求示例
+
+include::{snippets}/user/get-classpath/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/user/get-classpath/http-response.adoc[]
+
+=== 插入测试用户数据
+
+插入一条测试用户数据到users表。
+
+* 端点: `GET /api/users/insert`
+
+==== 请求示例
+
+include::{snippets}/user/insert/http-request.adoc[]
+
+==== 响应示例
+
+include::{snippets}/user/insert/http-response.adoc[]
+
+== 错误码说明
+
+|===
+| HTTP状态码 | 说明
+| 200 | 请求成功
+| 400 | 请求参数错误
+| 404 | 资源不存在
+| 500 | 服务器内部错误
+|===
