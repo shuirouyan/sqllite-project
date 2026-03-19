@@ -2,11 +2,14 @@ package com.sqllite.sqlliteproject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 应用程序主类
  */
 @SpringBootApplication
+@EnableScheduling
+
 public class SqlliteProjectApplication {
 
     public static void main(String[] args) {
