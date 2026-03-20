@@ -16,7 +16,7 @@ public class CronExecConfig {
     private Logger logger = LoggerFactory.getLogger(CronExecConfig.class);
     @Scheduled(cron = "*/2 * * * * ?")
     public void method01() {
-        String[] exec = {"echo","test"};
+        String[] exec = {"/bin/echo","$(date)"};
         try {
             Process exec1 = Runtime.getRuntime().exec(exec);
             logger.info("cron...{}", new String(exec1.getInputStream().readAllBytes()));
